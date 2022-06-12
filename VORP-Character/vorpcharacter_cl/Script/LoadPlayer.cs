@@ -31,6 +31,7 @@ namespace VorpCharacter.Script
             EventHandlers["vorpcharacter:getPlayerComps"] += new Action<CallbackDelegate>(getPlayerComps);
             EventHandlers["vorpcharacter:reloadPlayerComps"] += new Action<ExpandoObject, ExpandoObject>(reloadPlayerComps);
 
+
 #if DEVELOPMENT
             RegisterCommand("cc_unstuck", new Action<int, List<object>, string>((source, args, raw) =>
             {
@@ -49,6 +50,8 @@ namespace VorpCharacter.Script
                 bool isCuffed = Utilities.IsPedCuffed(Cache.PlayerPedId);
                 bool isHogtied = Utilities.IsPedHogtied(Cache.PlayerPedId);
 
+                int currentStamina = Utilities.GetAttributeCoreValue(API.PlayerId(), eAttributeCore.Stamina);
+
                 if (isCuffed || isHogtied) return; // need notification
 
                 if (args.Count == 0)
@@ -59,7 +62,12 @@ namespace VorpCharacter.Script
 
                 ReloadCharacterSkin($"{args[0]}");
 
+                Wait(500);
+                Utilities.SetAttributeCoreValue(API.PlayerId(), eAttributeCore.Stamina, currentStamina);
+
             }), false);
+
+            
 
             Logger.Info($"VORP Character LoadPlayer");
 
